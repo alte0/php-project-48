@@ -1,0 +1,15 @@
+{
+    "name": "hexlet/code",
+    "type": "project",
+    "require": {
+        "docopt/docopt": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        }
+    }
+}
