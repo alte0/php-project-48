@@ -14,4 +14,6 @@ if (file_exists($autoloadPath1)) {
 
 require_once $autoloadPath;
 
-\GenDiff\gendiff();
+use function GenDiff\initApp;
+
+initApp();
