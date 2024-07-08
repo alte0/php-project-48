@@ -20,6 +20,9 @@
     <source>
         <include>
             <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory>./vendor</directory>
+            </exclude>
         </include>
     </source>
 </phpunit>
