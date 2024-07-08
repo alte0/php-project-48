@@ -31,8 +31,8 @@ class UserTest extends TestCase
             '}'
         ];
         $expected = implode(PHP_EOL, $arrExpected);
-        $filePath1 = __DIR__ . '/json/file1.json';
-        $filePath2 = __DIR__ . '/json/file2.json';
+        $filePath1 = __DIR__ . '/fixtures/file1.json';
+        $filePath2 = __DIR__ . '/fixtures/file2.json';
         $actual = genDiff($filePath1, $filePath2);
         $this->assertEquals($expected, $actual);
     }
