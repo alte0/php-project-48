@@ -4,6 +4,8 @@ namespace GenDiff;
 
 use Docopt;
 
+use function Parsers\getData;
+
 function initApp(): void
 {
     $result = initDocoptGenDiff();
@@ -48,56 +50,48 @@ function genDiff(string $pathFile1, string $pathFile2): string
     $resDiff = [];
     $resDiff[] = '{';
 
-    $realPathFile1 = \realpath($pathFile1);
-    $realPathFile2 = \realpath($pathFile2);
+    $arrFile1 = getData($pathFile1);
+    $arrFile2 = getData($pathFile2);
 
-    if (is_file($realPathFile1) && is_file($realPathFile2)) {
-        $contentFile1 = \file_get_contents($realPathFile1);
-        $contentFile2 = \file_get_contents($realPathFile2);
+    \ksort($arrFile1, SORT_STRING);
+    \ksort($arrFile2, SORT_STRING);
 
-        $arrFile1 = \json_decode($contentFile1, true);
-        $arrFile2 = \json_decode($contentFile2, true);
+    do {
+        $continue = false;
+        $key1 = \key($arrFile1);
+        $key2 = \key($arrFile2);
 
-        \ksort($arrFile1, SORT_STRING);
-        \ksort($arrFile2, SORT_STRING);
+        if ($key1 !== null && $key2 !== null) {
+            $value1 = getValueString($arrFile1[$key1]);
+            $value2 = getValueString($arrFile2[$key2]);
 
-        do {
-            $continue = false;
-            $key1 = \key($arrFile1);
-            $key2 = \key($arrFile2);
-
-            if ($key1 !== null && $key2 !== null) {
-                $value1 = getValueString($arrFile1[$key1]);
-                $value2 = getValueString($arrFile2[$key2]);
-
-                if ($key1 === $key2) {
-                    if ($value1 === $value2) {
-                        $resDiff[] = "  $key1: $value1";
-                    } else {
-                        $resDiff[] = "- $key1: $value1";
-                        $resDiff[] = "+ $key2: $value2";
-                    }
-
-                    \next($arrFile1);
-                    \next($arrFile2);
-                    $continue = true;
-                } elseif (!\array_key_exists($key1, $arrFile2)) {
+            if ($key1 === $key2) {
+                if ($value1 === $value2) {
+                    $resDiff[] = "  $key1: $value1";
+                } else {
                     $resDiff[] = "- $key1: $value1";
-
-                    \next($arrFile1);
-                    $continue = true;
+                    $resDiff[] = "+ $key2: $value2";
                 }
-            } elseif ($key2 !== null && $key1 === null) {
-                $keyLast2 = \array_key_last($arrFile2);
-                $value = getValueString($arrFile2[$keyLast2]);
 
-                $resDiff[] = "+ $keyLast2: $value";
-
+                \next($arrFile1);
                 \next($arrFile2);
                 $continue = true;
+            } elseif (!\array_key_exists($key1, $arrFile2)) {
+                $resDiff[] = "- $key1: $value1";
+
+                \next($arrFile1);
+                $continue = true;
             }
-        } while ($continue);
-    }
+        } elseif ($key2 !== null && $key1 === null) {
+            $keyLast2 = \array_key_last($arrFile2);
+            $value = getValueString($arrFile2[$keyLast2]);
+
+            $resDiff[] = "+ $keyLast2: $value";
+
+            \next($arrFile2);
+            $continue = true;
+        }
+    } while ($continue);
 
     $resDiff[] = '}';
 
