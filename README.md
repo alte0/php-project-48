@@ -8,3 +8,5 @@ json file
 [![asciicast](https://asciinema.org/a/inqAd8eg9I6XALtaHOHYAThdX.svg)](https://asciinema.org/a/inqAd8eg9I6XALtaHOHYAThdX)
 yaml file
 [![asciicast](https://asciinema.org/a/mBGGxD9gdpVfJJs3HngePaLeg.svg)](https://asciinema.org/a/mBGGxD9gdpVfJJs3HngePaLeg)
+format stylish
+[![asciicast](https://asciinema.org/a/F8hn8dQU16tmFYrWk2jxtjdTL.svg)](https://asciinema.org/a/F8hn8dQU16tmFYrWk2jxtjdTL)

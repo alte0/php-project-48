@@ -4,18 +4,23 @@ namespace GenDiff;
 
 use Docopt;
 
-use function Parsers\getData;
+use function Help\isAssoc;
+use function Parsers\parseData;
+use function Formatter\setFormatter;
+use function Formatter\allowFormat;
+use function Formatter\getDiffByFormat;
 
 function initApp(): void
 {
-    $result = initDocoptGenDiff();
+    $result = initDocopt();
     $args = $result->args;
+
     runGenDiff($args);
 }
 
-function initDocoptGenDiff(): Docopt\Response
+function initDocopt(): Docopt\Response
 {
-
+    $formatReports = implode(', ', allowFormat());
     $doc = <<<DOC
     Generate diff
     
@@ -27,7 +32,7 @@ function initDocoptGenDiff(): Docopt\Response
     Options:
       -h --help         Show this screen.
       -v --version      Show version.
-      --format <fmt>    Report format [default: stylish]
+      --format <fmt>    Report format [default: $formatReports]
 
     DOC;
 
@@ -37,7 +42,9 @@ function initDocoptGenDiff(): Docopt\Response
 function runGenDiff(array $arg): bool
 {
     if (isset($arg['<firstFile>']) && isset($arg['<secondFile>'])) {
-        echo genDiff($arg['<firstFile>'], $arg['<secondFile>']) . PHP_EOL;
+        $format = !isset($args['--format']) ? setFormatter() : $args['--format'];
+
+        echo genDiff($arg['<firstFile>'], $arg['<secondFile>'], setFormatter($format)) . PHP_EOL;
 
         return true;
     }
@@ -45,68 +52,51 @@ function runGenDiff(array $arg): bool
     return false;
 }
 
-function genDiff(string $pathFile1, string $pathFile2): string
+function genDiff(string $pathFile1, string $pathFile2, string $format): string
 {
-    $resDiff = [];
-    $resDiff[] = '{';
+    $arrFile1 = parseData($pathFile1);
+    $arrFile2 = parseData($pathFile2);
 
-    $arrFile1 = getData($pathFile1);
-    $arrFile2 = getData($pathFile2);
+    $format = setFormatter($format);
 
-    \ksort($arrFile1, SORT_STRING);
-    \ksort($arrFile2, SORT_STRING);
+    $diff = diff($arrFile1, $arrFile2, $format);
 
-    do {
-        $continue = false;
-        $key1 = \key($arrFile1);
-        $key2 = \key($arrFile2);
+    $str = getDiffByFormat($diff, $format);
 
-        if ($key1 !== null && $key2 !== null) {
-            $value1 = getValueString($arrFile1[$key1]);
-            $value2 = getValueString($arrFile2[$key2]);
-
-            if ($key1 === $key2) {
-                if ($value1 === $value2) {
-                    $resDiff[] = "  $key1: $value1";
-                } else {
-                    $resDiff[] = "- $key1: $value1";
-                    $resDiff[] = "+ $key2: $value2";
-                }
-
-                \next($arrFile1);
-                \next($arrFile2);
-                $continue = true;
-            } elseif (!\array_key_exists($key1, $arrFile2)) {
-                $resDiff[] = "- $key1: $value1";
-
-                \next($arrFile1);
-                $continue = true;
-            }
-        } elseif ($key2 !== null && $key1 === null) {
-            $keyLast2 = \array_key_last($arrFile2);
-            $value = getValueString($arrFile2[$keyLast2]);
-
-            $resDiff[] = "+ $keyLast2: $value";
-
-            \next($arrFile2);
-            $continue = true;
-        }
-    } while ($continue);
-
-    $resDiff[] = '}';
-
-    return \implode(PHP_EOL, $resDiff);
+    return $str;
 }
 
-/**
- * @param string|int|bool $value
- * @return string
- */
-function getValueString($value): string
+function diff(array $arrFile1, array $arrFile2): array
 {
-    if (is_bool($value)) {
-        return $value ? 'true' : 'false';
-    }
+    $keys = array_merge(array_keys($arrFile1), array_keys($arrFile2));
+    $keysUnique = array_unique($keys);
+    sort($keysUnique, SORT_STRING);
 
-    return (string)$value;
+    $diff = array_map(
+        function ($key) use ($arrFile1, $arrFile2) {
+            if (!array_key_exists($key, $arrFile2)) {
+                return ['key' => $key, 'type' => 'deleted', 'value' => $arrFile1[$key]];
+            }
+
+            if (!array_key_exists($key, $arrFile1)) {
+                return ['key' => $key, 'type' => 'add', 'value' => $arrFile2[$key]];
+            }
+
+            if ($arrFile1[$key] === $arrFile2[$key]) {
+                return ['key' => $key, 'type' => 'unchanged', 'value' => $arrFile1[$key]];
+            }
+
+            if (
+                is_array($arrFile1[$key]) && is_array($arrFile2[$key]) &&
+                isAssoc($arrFile1[$key]) && isAssoc($arrFile2[$key])
+            ) {
+                return ['key' => $key, 'type' => 'nested', 'value' => diff($arrFile1[$key], $arrFile2[$key])];
+            }
+
+            return ['key' => $key, 'type' => 'changed', 'value' => $arrFile1[$key], 'value2' => $arrFile2[$key]];
+        },
+        $keysUnique
+    );
+
+    return $diff;
 }

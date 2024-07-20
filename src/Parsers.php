@@ -4,11 +4,13 @@ namespace Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
+use function Help\getExtFile;
+
 /** Парсим данные из файла
  * @param string $filePath
  * @return array
  */
-function getData(string $filePath = ''): array
+function parseData(string $filePath): array
 {
     $realPathFile = \realpath($filePath);
 
@@ -16,15 +18,39 @@ function getData(string $filePath = ''): array
         return [];
     }
 
-    $extFile = \pathinfo($realPathFile, PATHINFO_EXTENSION);
-    $allowExtDiff = ['json', 'yaml', 'yml'];
+    $extFile = getExtFile($realPathFile);
 
-    if (!\in_array($extFile, $allowExtDiff)) {
+    if (!isAllowParseFile($extFile)) {
         return [];
     }
 
-    $contentFile = \file_get_contents($realPathFile);
+    $contentsFile = \file_get_contents($realPathFile);
 
+    if (mb_strlen($contentsFile) === false) {
+        return [];
+    }
+
+    return parseContent($contentsFile, $extFile);
+}
+
+/** Список разрешенных файлов для парсинга данных
+ * @param string $extFile
+ * @return bool
+ */
+function isAllowParseFile(string $extFile): bool
+{
+    $allowExtDiff = ['json', 'yaml', 'yml'];
+
+    return \in_array($extFile, $allowExtDiff, true);
+}
+
+/** Парсинг данных полученных из файла
+ * @param $contentFile
+ * @param string $extFile
+ * @return array
+ */
+function parseContent($contentFile, string $extFile): array
+{
     if ('json' === $extFile) {
         return \json_decode($contentFile, true);
     } elseif (in_array($extFile, ['yaml', 'yml'])) {
@@ -32,4 +58,6 @@ function getData(string $filePath = ''): array
 
         return (array)$value;
     }
+
+    return [];
 }
