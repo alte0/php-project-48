@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Differ\\": "src/"
+            "Hexlet\\\\Code\\\\": "src/"
         },
         "files": [
             "src/GenDiff.php",
