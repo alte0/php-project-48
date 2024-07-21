@@ -4,13 +4,14 @@ namespace GenDiff\Tests;
 
 use PHPUnit\Framework\TestCase;
 use function \GenDiff\genDiff;
-use function Formatter\setFormatter;
+use function Formatters\setFormatter;
 
 class DifferTest extends TestCase
 {
     private string $format = '';
     private string $expectedEmpty = '';
     private string $expectedRec = '';
+    private string $expectedPlain = '';
     private string $path = __DIR__ . "/fixtures/";
 
     /** Получение тестовых файлов
@@ -79,6 +80,21 @@ class DifferTest extends TestCase
             '}'
         ];
         $this->expectedRec = implode(PHP_EOL, $arrExpectedRec);
+
+        $arrExpectedPlain = [
+            "Property 'common.follow' was added with value: false",
+            "Property 'common.setting2' was removed",
+            "Property 'common.setting3' was updated. From true to null",
+            "Property 'common.setting4' was added with value: 'blah blah'",
+            "Property 'common.setting5' was added with value: [complex value]",
+            "Property 'common.setting6.doge.wow' was updated. From '' to 'so much'",
+            "Property 'common.setting6.ops' was added with value: 'vops'",
+            "Property 'group1.baz' was updated. From 'bas' to 'bars'",
+            "Property 'group1.nest' was updated. From [complex value] to 'str'",
+            "Property 'group2' was removed",
+            "Property 'group3' was added with value: [complex value]",
+        ];
+        $this->expectedPlain = implode(PHP_EOL, $arrExpectedPlain);
     }
 
     public function testGenDiffEmptyPath(): void
@@ -87,12 +103,21 @@ class DifferTest extends TestCase
         $this->assertEquals($this->expectedEmpty, $actual);
     }
 
-    public function testGenDiff2FilesJsonFinal(): void
+    public function testGenDiff2FilesJson(): void
     {
             $filePath1 = $this->getFixture('fileFinal1.json');
             $filePath2 = $this->getFixture('fileFinal2.json');
             $actual = genDiff($filePath1, $filePath2, $this->format);
 
             $this->assertEquals($this->expectedRec, $actual);
+    }
+
+    public function testGenDiff2FilesPlain(): void
+    {
+        $filePath1 = $this->getFixture('fileFinal1.json');
+        $filePath2 = $this->getFixture('fileFinal2.json');
+        $actual = genDiff($filePath1, $filePath2, setFormatter('plain'));
+
+        $this->assertEquals($this->expectedPlain, $actual);
     }
 }

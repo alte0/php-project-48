@@ -1,8 +1,9 @@
 <?php
 
-namespace Formatter;
+namespace Formatters;
 
-use function Formatter\Stylish\stylishFormatter;
+use function Formatters\Stylish\stylishFormatter;
+use function Formatters\Plain\plainFormatter;
 
 /** Получение формата отчёта сравнения
  * @param array $arr
@@ -14,7 +15,8 @@ function getDiffByFormat(array $arr, string $format): string
     $res = '';
 
     switch ($format) {
-        case 'temp':
+        case 'plain':
+            $res = plainFormatter($arr);
             break;
         case 'stylish':
             $res = stylishFormatter($arr);
@@ -44,5 +46,5 @@ function setFormatter(string $format = 'stylish'): string
  */
 function allowFormat(): array
 {
-    return ['stylish'];
+    return ['stylish', 'plain'];
 }

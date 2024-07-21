@@ -6,9 +6,9 @@ use Docopt;
 
 use function Help\isAssoc;
 use function Parsers\parseData;
-use function Formatter\setFormatter;
-use function Formatter\allowFormat;
-use function Formatter\getDiffByFormat;
+use function Formatters\setFormatter;
+use function Formatters\allowFormat;
+use function Formatters\getDiffByFormat;
 
 function initApp(): void
 {
@@ -39,12 +39,12 @@ function initDocopt(): Docopt\Response
     return \Docopt::handle($doc, ['version' => 'Generate diff 0.1']);
 }
 
-function runGenDiff(array $arg): bool
+function runGenDiff(array $args): bool
 {
-    if (isset($arg['<firstFile>']) && isset($arg['<secondFile>'])) {
+    if (isset($args['<firstFile>']) && isset($args['<secondFile>'])) {
         $format = !isset($args['--format']) ? setFormatter() : $args['--format'];
 
-        echo genDiff($arg['<firstFile>'], $arg['<secondFile>'], setFormatter($format)) . PHP_EOL;
+        echo genDiff($args['<firstFile>'], $args['<secondFile>'], setFormatter($format)) . PHP_EOL;
 
         return true;
     }
@@ -59,7 +59,7 @@ function genDiff(string $pathFile1, string $pathFile2, string $format): string
 
     $format = setFormatter($format);
 
-    $diff = diff($arrFile1, $arrFile2, $format);
+    $diff = diff($arrFile1, $arrFile2);
 
     $str = getDiffByFormat($diff, $format);
 

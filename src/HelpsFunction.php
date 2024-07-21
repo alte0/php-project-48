@@ -12,10 +12,11 @@ function isAssoc(array $arr): bool
 }
 
 /** Преобразовывает значение к строке
- * @param $value
+ * @param mixed $value
+ * @param bool $removeSingleQuotes
  * @return string
  */
-function valueToString($value): string
+function valueToString($value, bool $removeSingleQuotes = true): string
 {
     $str = var_export($value, true);
 
@@ -23,10 +24,14 @@ function valueToString($value): string
         $str = strtolower($str);
     }
 
-    return $str !== null ? trim($str, "'") : '';
+    if ($removeSingleQuotes) {
+        $str = trim($str, "'");
+    }
+
+    return $str;
 }
 
-function getExtFile(string $pathFile)
+function getExtFile(string $pathFile): string
 {
     return \pathinfo($pathFile, PATHINFO_EXTENSION);
 }

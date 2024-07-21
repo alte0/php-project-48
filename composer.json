@@ -22,8 +22,9 @@
             "src/GenDiff.php",
             "src/Parsers.php",
             "src/HelpsFunction.php",
-            "src/Formatter.php",
-            "src/Formatter/Stylish.php"
+            "src/Formatters.php",
+            "src/Formatters/Stylish.php",
+            "src/Formatters/Plain.php"
         ]
     },
     "scripts": {
