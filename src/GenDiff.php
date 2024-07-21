@@ -52,7 +52,7 @@ function runGenDiff(array $args): bool
     return false;
 }
 
-function genDiff(string $pathFile1, string $pathFile2, string $format): string
+function genDiff(string $pathFile1, string $pathFile2, string $format = 'stylish'): string
 {
     $arrFile1 = parseData($pathFile1);
     $arrFile2 = parseData($pathFile2);
