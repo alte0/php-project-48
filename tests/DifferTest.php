@@ -3,7 +3,8 @@
 namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
-use function \Differ\genDiff;
+
+use function Differ\genDiff;
 use function Formatters\setFormatter;
 
 class DifferTest extends TestCase
@@ -216,7 +217,7 @@ class DifferTest extends TestCase
 }
 JSON;
 
-        $this->expectedJson= $expectedJson;
+        $this->expectedJson = $expectedJson;
     }
 
     public function testGenDiffEmptyPath(): void
