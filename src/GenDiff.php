@@ -1,6 +1,6 @@
 <?php
 
-namespace GenDiff;
+namespace Differ;
 
 use Docopt;
 
