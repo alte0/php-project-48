@@ -4,6 +4,7 @@ namespace Formatters;
 
 use function Formatters\Stylish\stylishFormatter;
 use function Formatters\Plain\plainFormatter;
+use function Formatters\Json\jsonFormatter;
 
 /** Получение формата отчёта сравнения
  * @param array $arr
@@ -15,6 +16,9 @@ function getDiffByFormat(array $arr, string $format): string
     $res = '';
 
     switch ($format) {
+        case 'json':
+            $res = jsonFormatter($arr);
+            break;
         case 'plain':
             $res = plainFormatter($arr);
             break;
@@ -46,5 +50,5 @@ function setFormatter(string $format = 'stylish'): string
  */
 function allowFormat(): array
 {
-    return ['stylish', 'plain'];
+    return ['stylish', 'plain', 'json'];
 }
