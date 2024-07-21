@@ -252,4 +252,13 @@ JSON;
 
         $this->assertEquals($this->expectedJson, $actual);
     }
+
+    public function testGenDiff2FilesYaml(): void
+    {
+        $filePath1 = $this->getFixture('fileFinal1.yaml');
+        $filePath2 = $this->getFixture('fileFinal2.yaml');
+        $actual = genDiff($filePath1, $filePath2, setFormatter());
+
+        $this->assertEquals($this->expectedRec, $actual);
+    }
 }

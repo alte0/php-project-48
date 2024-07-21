@@ -54,9 +54,7 @@ function parseContent($contentFile, string $extFile): array
     if ('json' === $extFile) {
         return \json_decode($contentFile, true);
     } elseif (in_array($extFile, ['yaml', 'yml'])) {
-        $value = Yaml::parse($contentFile, Yaml::PARSE_OBJECT_FOR_MAP);
-
-        return (array)$value;
+        return Yaml::parse($contentFile);
     }
 
     return [];
