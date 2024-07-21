@@ -16,4 +16,4 @@ require_once $autoloadPath;
 
 use function Differ\Differ\initApp;
 
-initApp();
+echo initApp();

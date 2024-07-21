@@ -10,12 +10,14 @@ use function Formatters\setFormatter;
 use function Formatters\allowFormat;
 use function Formatters\getDiffByFormat;
 
-function initApp(): void
+function initApp(): string
 {
     $result = initDocopt();
     $args = $result->args;
 
-    runGenDiff($args);
+    $result = runGenDiff($args);
+
+    return $result;
 }
 
 function initDocopt(): Docopt\Response
@@ -39,17 +41,17 @@ function initDocopt(): Docopt\Response
     return \Docopt::handle($doc, ['version' => 'Generate diff 0.1']);
 }
 
-function runGenDiff(array $args): bool
+function runGenDiff(array $args): string
 {
     if (isset($args['<firstFile>']) && isset($args['<secondFile>'])) {
         $format = !isset($args['--format']) ? setFormatter() : $args['--format'];
 
-        echo genDiff($args['<firstFile>'], $args['<secondFile>'], setFormatter($format)) . PHP_EOL;
+        $res = genDiff($args['<firstFile>'], $args['<secondFile>'], setFormatter($format)) . PHP_EOL;
 
-        return true;
+        return $res;
     }
 
-    return false;
+    return '';
 }
 
 function genDiff(string $pathFile1, string $pathFile2, string $format = 'stylish'): string
@@ -57,11 +59,11 @@ function genDiff(string $pathFile1, string $pathFile2, string $format = 'stylish
     $arrFile1 = parseData($pathFile1);
     $arrFile2 = parseData($pathFile2);
 
-    $format = setFormatter($format);
+    $usedFormat = setFormatter($format);
 
     $diff = diff($arrFile1, $arrFile2);
 
-    $str = getDiffByFormat($diff, $format);
+    $str = getDiffByFormat($diff, $usedFormat);
 
     return $str;
 }
@@ -70,7 +72,7 @@ function diff(array $arrFile1, array $arrFile2): array
 {
     $keys = array_merge(array_keys($arrFile1), array_keys($arrFile2));
     $keysUnique = array_unique($keys);
-    sort($keysUnique, SORT_STRING);
+    sort($keysUnique, SORT_STRING); // del sort
 
     $diff = array_map(
         function ($key) use ($arrFile1, $arrFile2) {

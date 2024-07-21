@@ -13,19 +13,19 @@ function plainFormatter($data, string $keyName = ''): string
 {
     $arrStr = array_map(
         function ($item) use ($keyName) {
-            $keyName = empty($keyName) ? $item['key'] : $keyName . '.' . $item['key'];
+            $keyNewName = $keyName === '' ? $item['key'] : $keyName . '.' . $item['key'];
 
             $str = '';
 
             if ($item['type'] === 'deleted') {
-                $str = "Property '{$keyName}' was removed";
+                $str = "Property '{$keyNewName}' was removed";
             } elseif ($item['type'] === 'nested') {
-                $str = plainFormatter($item['value'], $keyName);
+                $str = plainFormatter($item['value'], $keyNewName);
             } elseif ($item['type'] === 'changed') {
-                $str = "Property '{$keyName}' was updated. From " . valToString($item['value']) .
+                $str = "Property '{$keyNewName}' was updated. From " . valToString($item['value']) .
                     ' to ' . valToString($item['value2']);
             } elseif ($item['type'] === 'add') {
-                $str = "Property '{$keyName}' was added with value: " . valToString($item['value']);
+                $str = "Property '{$keyNewName}' was added with value: " . valToString($item['value']);
             }
 
             return $str;
@@ -40,6 +40,10 @@ function plainFormatter($data, string $keyName = ''): string
     return $str;
 }
 
+/**
+ * @param mixed $val
+ * @return string
+ */
 function valToString($val): string
 {
     if (is_array($val)) {

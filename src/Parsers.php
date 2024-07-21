@@ -12,7 +12,8 @@ use function Help\getExtFile;
  */
 function parseData(string $filePath): array
 {
-    $realPathFile = \realpath($filePath);
+    $realPath = \realpath($filePath);
+    $realPathFile = $realPath ? : '';
 
     if (!\is_file($realPathFile)) {
         return [];
@@ -24,9 +25,10 @@ function parseData(string $filePath): array
         return [];
     }
 
-    $contentsFile = \file_get_contents($realPathFile);
+    $contents = \file_get_contents($realPathFile);
+    $contentsFile = $contents !== false ? $contents : '';
 
-    if (mb_strlen($contentsFile) === false) {
+    if (mb_strlen($contentsFile) === 0) {
         return [];
     }
 
@@ -45,15 +47,15 @@ function isAllowParseFile(string $extFile): bool
 }
 
 /** Парсинг данных полученных из файла
- * @param $contentFile
+ * @param string $contentFile
  * @param string $extFile
  * @return array
  */
-function parseContent($contentFile, string $extFile): array
+function parseContent(string $contentFile, string $extFile): array
 {
     if ('json' === $extFile) {
         return \json_decode($contentFile, true);
-    } elseif (in_array($extFile, ['yaml', 'yml'])) {
+    } elseif (in_array($extFile, ['yaml', 'yml'], true)) {
         return Yaml::parse($contentFile);
     }
 

@@ -2,7 +2,13 @@
 
 namespace Formatters\Json;
 
-function jsonFormatter($data)
+/**
+ * @param mixed $data
+ * @return string
+ */
+function jsonFormatter($data): string
 {
-    return json_encode($data, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT);
+    $res = json_encode($data, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT);
+
+    return $res !== false ? $res : '';
 }

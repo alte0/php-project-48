@@ -15,7 +15,7 @@ function stylishFormatter($data, int $depth = 1): string
         return valueToString($data);
     }
 
-    $isHasNotTypeKeys = empty(array_column($data, 'type'));
+    $isHasNotTypeKeys = count(array_column($data, 'type')) === 0;
 
     if ($isHasNotTypeKeys) {
         $arrDiffStr = getDiffByWithoutTypeKey($data, $depth);
@@ -41,24 +41,25 @@ function getDiffByTypeKey($data, int $depth): array
         $data,
         function ($acc, $item) use ($depth) {
             $nextDepth = $depth + 1;
+            $newAcc = [];
 
             if ($item['type'] === 'deleted') {
                 $key = calcCountCharsRepeat($depth, 2) . '- ' . $item['key'] . ': ';
-                $acc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
             } elseif ($item['type'] === 'unchanged' || $item['type'] === 'nested') {
                 $key = calcCountCharsRepeat($depth) . $item['key'] . ': ';
-                $acc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
             } elseif ($item['type'] === 'changed') {
                 $key1 = calcCountCharsRepeat($depth, 2) . '- ' . $item['key'] . ': ';
-                $acc[] = $key1 . stylishFormatter($item['value'], $nextDepth);
+                $newAcc[] = $key1 . stylishFormatter($item['value'], $nextDepth);
                 $key2 = calcCountCharsRepeat($depth, 2) . '+ ' . $item['key'] . ': ';
-                $acc[] = $key2 . stylishFormatter($item['value2'], $nextDepth);
+                $newAcc[] = $key2 . stylishFormatter($item['value2'], $nextDepth);
             } elseif ($item['type'] === 'add') {
                 $key = calcCountCharsRepeat($depth, 2) . '+ ' . $item['key'] . ': ';
-                $acc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
             }
 
-            return $acc;
+            return array_merge($acc, $newAcc);
         },
         []
     );

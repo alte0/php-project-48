@@ -18,15 +18,9 @@ function isAssoc(array $arr): bool
  */
 function valueToString($value, bool $removeSingleQuotes = true): string
 {
-    $str = var_export($value, true);
-
-    if ($value === null) {
-        $str = strtolower($str);
-    }
-
-    if ($removeSingleQuotes) {
-        $str = trim($str, "'");
-    }
+    $res = var_export($value, true);
+    $lowerValue = $res === 'NULL' ? strtolower($res) : $res;
+    $str = $removeSingleQuotes ? trim($lowerValue, "'") : $lowerValue;
 
     return $str;
 }

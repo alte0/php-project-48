@@ -13,8 +13,6 @@ use function Formatters\Json\jsonFormatter;
  */
 function getDiffByFormat(array $arr, string $format): string
 {
-    $res = '';
-
     switch ($format) {
         case 'json':
             $res = jsonFormatter($arr);
@@ -24,6 +22,9 @@ function getDiffByFormat(array $arr, string $format): string
             break;
         case 'stylish':
             $res = stylishFormatter($arr);
+            break;
+        default:
+            $res = '';
             break;
     }
 
@@ -38,7 +39,7 @@ function setFormatter(string $format = 'stylish'): string
 {
     $defaultFormat = 'stylish';
 
-    if (in_array($format, allowFormat())) {
+    if (in_array($format, allowFormat(), true)) {
         return $format;
     }
 
