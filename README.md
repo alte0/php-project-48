@@ -12,3 +12,5 @@ format stylish
 [![asciicast](https://asciinema.org/a/F8hn8dQU16tmFYrWk2jxtjdTL.svg)](https://asciinema.org/a/F8hn8dQU16tmFYrWk2jxtjdTL)
 format plain
 [![asciicast](https://asciinema.org/a/7BtnvjbCFoMMkQuLe4iTUbG7a.svg)](https://asciinema.org/a/7BtnvjbCFoMMkQuLe4iTUbG7a)
+format json
+[![asciicast](https://asciinema.org/a/eko88P519sAF00zzdue90pOS2.svg)](https://asciinema.org/a/eko88P519sAF00zzdue90pOS2)
