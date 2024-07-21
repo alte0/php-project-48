@@ -15,8 +15,6 @@ function plainFormatter($data, string $keyName = ''): string
         function ($item) use ($keyName) {
             $keyNewName = $keyName === '' ? $item['key'] : $keyName . '.' . $item['key'];
 
-            $str = '';
-
             if ($item['type'] === 'deleted') {
                 $str = "Property '{$keyNewName}' was removed";
             } elseif ($item['type'] === 'nested') {
@@ -28,7 +26,7 @@ function plainFormatter($data, string $keyName = ''): string
                 $str = "Property '{$keyNewName}' was added with value: " . valToString($item['value']);
             }
 
-            return $str;
+            return isset($str) ? $str : '';
         },
         $data
     );

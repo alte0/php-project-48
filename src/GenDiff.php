@@ -9,15 +9,16 @@ use function Parsers\parseData;
 use function Formatters\setFormatter;
 use function Formatters\allowFormat;
 use function Formatters\getDiffByFormat;
+use function Functional\sort;
 
 function initApp(): string
 {
     $result = initDocopt();
     $args = $result->args;
 
-    $result = runGenDiff($args);
+    $res = runGenDiff($args);
 
-    return $result;
+    return $res;
 }
 
 function initDocopt(): Docopt\Response
@@ -72,7 +73,7 @@ function diff(array $arrFile1, array $arrFile2): array
 {
     $keys = array_merge(array_keys($arrFile1), array_keys($arrFile2));
     $keysUnique = array_unique($keys);
-    sort($keysUnique, SORT_STRING); // del sort
+    $sortedKeys = sort($keys, fn ($left, $right) => strcmp($left, $right));
 
     $diff = array_map(
         function ($key) use ($arrFile1, $arrFile2) {
@@ -97,7 +98,7 @@ function diff(array $arrFile1, array $arrFile2): array
 
             return ['key' => $key, 'type' => 'changed', 'value' => $arrFile1[$key], 'value2' => $arrFile2[$key]];
         },
-        $keysUnique
+        $sortedKeys
     );
 
     return $diff;

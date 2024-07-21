@@ -41,25 +41,32 @@ function getDiffByTypeKey($data, int $depth): array
         $data,
         function ($acc, $item) use ($depth) {
             $nextDepth = $depth + 1;
-            $newAcc = [];
 
             if ($item['type'] === 'deleted') {
                 $key = calcCountCharsRepeat($depth, 2) . '- ' . $item['key'] . ': ';
-                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newKey = $key . stylishFormatter($item['value'], $nextDepth);
+
+                return array_merge($acc, [$newKey]);
             } elseif ($item['type'] === 'unchanged' || $item['type'] === 'nested') {
                 $key = calcCountCharsRepeat($depth) . $item['key'] . ': ';
-                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newKey = $key . stylishFormatter($item['value'], $nextDepth);
+
+                return array_merge($acc, [$newKey]);
             } elseif ($item['type'] === 'changed') {
                 $key1 = calcCountCharsRepeat($depth, 2) . '- ' . $item['key'] . ': ';
-                $newAcc[] = $key1 . stylishFormatter($item['value'], $nextDepth);
+                $newKey = $key1 . stylishFormatter($item['value'], $nextDepth);
                 $key2 = calcCountCharsRepeat($depth, 2) . '+ ' . $item['key'] . ': ';
-                $newAcc[] = $key2 . stylishFormatter($item['value2'], $nextDepth);
+                $newKey2 = $key2 . stylishFormatter($item['value2'], $nextDepth);
+
+                return array_merge($acc, [$newKey, $newKey2]);
             } elseif ($item['type'] === 'add') {
                 $key = calcCountCharsRepeat($depth, 2) . '+ ' . $item['key'] . ': ';
-                $newAcc[] = $key . stylishFormatter($item['value'], $nextDepth);
+                $newKey = $key . stylishFormatter($item['value'], $nextDepth);
+
+                return array_merge($acc, [$newKey]);
             }
 
-            return array_merge($acc, $newAcc);
+            return $acc;
         },
         []
     );

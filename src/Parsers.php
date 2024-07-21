@@ -13,7 +13,7 @@ use function Help\getExtFile;
 function parseData(string $filePath): array
 {
     $realPath = \realpath($filePath);
-    $realPathFile = $realPath ? : '';
+    $realPathFile = $realPath !== false ? : '';
 
     if (!\is_file($realPathFile)) {
         return [];
