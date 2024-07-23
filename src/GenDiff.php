@@ -73,7 +73,7 @@ function diff(array $arrFile1, array $arrFile2): array
 {
     $keys = array_merge(array_keys($arrFile1), array_keys($arrFile2));
     $keysUnique = array_unique($keys);
-    $sortedKeys = sort($keysUnique, fn ($left, $right) => strcmp($left, $right));
+    $sortedKeys = sort($keysUnique, fn ($left, $right) => \strcmp($left, $right));
 
     $diff = array_map(
         function ($key) use ($arrFile1, $arrFile2) {
