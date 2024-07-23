@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Hexlet\\\\Code\\\\": "src/"
+            "Hexlet\\Code\\": "src/"
         },
         "files": [
             "src/GenDiff.php",
